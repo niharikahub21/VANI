@@ -21,10 +21,10 @@ The core engineering challenge we tackled is **interruption and recovery**: if t
 ```
 +----------------------+          +----------------------+
 |  Chrome Extension    |  HTTP    |  Node.js / Express   |
-|  (overlay UI, mic    |<-------->|  Backend              |
-|  capture, audio      |          |                       |
-|  playback)            |          |                       |
-+----------------------+          +-----------+-----------+
+|  (overlay UI, mic    |<-------->|  Backend             |
+|  capture, audio      |          |                      |
+|  playback)           |          |                      |
++----------------------+          +------------+---------+
                                                |
                     +--------------------------+--------------------------+
                     |                          |                          |
@@ -120,3 +120,4 @@ The backend will be available at `http://localhost:3000`.
 - **Naintika** — Backend
 - **Niharika** — Extension
 - **Aryan** — Database & Testing
+-
