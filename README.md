@@ -19,28 +19,28 @@ The core engineering challenge we tackled is **interruption and recovery**: if t
 ## Architecture Overview
 
 ```
-┌─────────────────────┐        ┌──────────────────────┐
-│  Chrome Extension    │  HTTP  │   Node.js / Express    │
-│  (overlay UI, mic     │◄──────►│   Backend               │
-│   capture, audio      │        │                        │
-│   playback)            │        │                        │
-└─────────────────────┘        └──────────┬────────────┘
-                                            │
-                 ┌──────────────────────────┼──────────────────────────┐
-                 │                          │                          │
-                 ▼                          ▼                          ▼
-          ┌─────────────┐           ┌─────────────┐           ┌─────────────┐
-          │   Claude    │           │    Rime     │           │   Serper    │
-          │ (intent +   │           │  (text-to-  │           │ (web search)│
-          │  reasoning) │           │   speech)   │           │             │
-          └─────────────┘           └─────────────┘           └─────────────┘
-                                            │
-                                            ▼
-                                     ┌─────────────┐
-                                     │  Supabase   │
-                                     │ (notes,     │
-                                     │  reminders) │
-                                     └─────────────┘
++----------------------+          +----------------------+
+|  Chrome Extension    |  HTTP    |  Node.js / Express   |
+|  (overlay UI, mic    |<-------->|  Backend              |
+|  capture, audio      |          |                       |
+|  playback)            |          |                       |
++----------------------+          +-----------+-----------+
+                                               |
+                    +--------------------------+--------------------------+
+                    |                          |                          |
+                    v                          v                          v
+             +-------------+           +-------------+           +-------------+
+             |   Claude    |           |    Rime     |           |   Serper    |
+             | (intent +   |           |  (text-to-  |           | (web search)|
+             |  reasoning) |           |   speech)   |           |             |
+             +-------------+           +-------------+           +-------------+
+                                               |
+                                               v
+                                        +-------------+
+                                        |  Supabase   |
+                                        | (notes,     |
+                                        |  reminders) |
+                                        +-------------+
 ```
 
 **Flow:**
