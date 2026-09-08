@@ -17,6 +17,21 @@ app.use(express.json());
 // Initialize Gemini client using the API key from .env
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' });
+async function callGeminiWithRetry(fn, retries = 4, delay = 1500) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      const is503 = err.message && (err.message.includes('503') || err.message.includes('overloaded') || err.message.includes('high demand'));
+      if (is503 && i < retries - 1) {
+        console.log(`Gemini busy, retrying (${i + 1}/${retries})...`);
+        await new Promise(r => setTimeout(r, delay * (i + 1)));
+        continue;
+      }
+      throw err;
+    }
+  }
+}
 
 // Initialize Supabase client using the URL and key from .env
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
@@ -52,7 +67,7 @@ Respond ONLY with valid JSON in this exact format, no extra text, no markdown co
 
 User command: "${userText}"`;
 
-  const result = await model.generateContent(prompt);
+  const result = await callGeminiWithRetry(() => model.generateContent(prompt));
   let rawText = result.response.text().trim();
 
   // Remove markdown code fences if Gemini adds them
@@ -91,7 +106,7 @@ Question: ${query}
 
 Search info: ${snippets}`;
 
-  const result = await model.generateContent(prompt);
+  const result = await callGeminiWithRetry(() => model.generateContent(prompt));
   return result.response.text().trim();
 }
 
