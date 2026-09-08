@@ -113,11 +113,11 @@ The backend will be available at `http://localhost:3000`.
 - Interruption handling cancels the current response but does not yet preserve partial context from the cancelled turn.
 - Reminders are stored in Supabase but do not yet trigger native OS or browser notifications.
 - The overlay has been tested primarily on standard content pages; behavior on heavily sandboxed or CSP-restricted sites (e.g., some banking portals) is untested.
-- No multi-user account system yet — data storage is currently single-user/session-based.
+- Multi-user support is not yet implemented; data is currently managed on a single-user/session basis.
 
 ## Team Members
 
 - **Naintika** — Backend
 - **Niharika** — Extension
 - **Aryan** — Database & Testing
--
+  
