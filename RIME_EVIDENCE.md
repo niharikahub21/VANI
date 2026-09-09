@@ -1,10 +1,14 @@
 # Rime TTS Interruption Evidence
 
+## Category: Interruption and Recovery
+
+This submission targets the **Interruption and recovery** hard voice problem: stop queued TTS input and local playback promptly, cancel or fence obsolete model/tool results so they cannot re-enter the conversation, and keep application state consistent with what the user actually heard.
+
 ## Hard Voice Claim
 
-VoiceLayer uses Rime's `arcana` model with the `astra` speaker/voice (default, English) via the REST endpoint `https://users.rime.ai/v1/rime-tts` (HTTPS POST, mp3 audio format) to convert the assistant's text response into speech. A second speaker, `taru`, has also been added for Hindi responses.
+VoiceLayer uses Rime's `arcana` model with the `astra` speaker/voice (default, English) via the REST endpoint `https://users.rime.ai/v1/rime-tts` (HTTPS POST, mp3 audio format) as the **primary spoken output** for every assistant response. A second speaker, `taru`, has also been added for Hindi responses. Rime is not used for incidental speech (e.g. a one-time welcome message) — every assistant reply, in both the normal flow and the interruption flow, is spoken through Rime.
 
-When a new voice command interrupts audio that is currently playing, the system must immediately cancel the in-progress response and audio playback, then process the new command as a fresh request.
+When a new voice command interrupts audio that is currently playing, the system must immediately cancel the in-progress response and audio playback, then process the new command as a fresh request. Without this behavior, the assistant would keep speaking a stale response over the user's new command, making the product materially worse to use — removing this handling is not a cosmetic loss, it breaks the core interaction.
 
 ## Acceptance Test
 
@@ -12,7 +16,9 @@ The system passes this test if, when a user speaks a new command while the assis
 
 1. The previous response is cancelled (not queued or overlapped).
 2. Audio playback of the previous response stops without delay.
-3. The new command is sent to the backend and produces a correct, relevant spoken response.
+3. Any in-flight backend result for the cancelled request is fenced — if it arrives late, it is discarded and never spoken, so a stale response cannot re-enter the conversation after the user has moved on.
+4. The new command is sent to the backend and produces a correct, relevant spoken response.
+5. The final spoken output matches only what the user actually asked in the new command — not a blend of the old and new requests.
 
 ## Procedure
 
@@ -55,11 +61,23 @@ The console log screenshots below capture the raw evidence for the interruption 
 
 > Note: Make sure the `/screenshots` folder (with `interruption-test-1.jpg` through `interruption-test-4.jpg`) is committed alongside this README so the images render correctly on GitHub.
 
+## Fallback Behavior Disclosure
+
+- Rime is the default, primary speech provider used in the judged flow for every response.
+- Currently there is **no graceful fallback**: if the Rime request fails, the whole request returns a generic error instead of surfacing the text response through an alternate path. This is a known limitation, not a hidden failure mode.
+- The active speech provider is observable in the browser console logs (`Sending to backend`, `content.js` log lines) shown in the screenshots.
+
+## Credential Protection
+
+- The Rime API key is read from a server-side environment variable and is never sent to or stored in client-side code, the browser console, screenshots, or the demo recording.
+- `.env.example` in this repo lists only placeholder values (`RIME_API_KEY=your_api_key_here`) — no real key is committed anywhere in the repository history.
+
 ## Limitations
 
 - Interruptions shorter than 3 characters are ignored to prevent false triggers from background noise or accidental sounds.
 - Requires a stable internet connection for backend calls (Gemini, Rime, Serper); interruption cancellation logic runs client-side, but the new command still depends on a successful network round-trip to produce a response.
 - Free-tier API rate limits (e.g. Gemini's 20 requests/day) can cause intermittent 429/500 errors unrelated to the interruption logic itself.
+- No fallback TTS provider is currently wired in if Rime is unavailable (see Fallback Behavior Disclosure above).
 
 ## Repeatable Verification Script
 
