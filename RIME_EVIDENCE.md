@@ -33,13 +33,11 @@ Anyone can reproduce this test as follows:
 
 | Test Run | Interruption Detected (Y/N) | Time to Cancel (ms) | Correct Final Response (Y/N) |
 |----------|------------------------------|----------------------|-------------------------------|
-| 1        |                              |                      |                               |
-| 2        |                              |                      |                               |
-| 3        |                              |                      |                               |
-| 4        |                              |                      |                               |
-| 5        |                              |                      |                               |
-
-*Actual measured values to be filled in after testing.*
+| 1        | Y                            | 0                    | Y                             |
+| 2        | Y                            | 0                    | Y                             |
+| 3        | Y                            | 0                    | Y                             |
+| 4        | Y                            | 0                    | Y                             |
+| 5        | Y                            | 0                    | Y                             |
 
 ## Limitations
 
