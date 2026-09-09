@@ -1,4 +1,4 @@
-# VoiceLayer
+# VANI
 
 A persistent, voice-first Chrome extension overlay that lets users search the web, take notes, and set reminders using their voice—on any website, without switching tabs—while seamlessly handling real-time interruptions.
 
@@ -84,8 +84,8 @@ Voice assistants today are confined to a single dedicated app or tab. If a user 
 | Field | Value |
 |---|---|
 | Rime Model ID | `arcana` |
-| Speaker / Voice | `astra` |
-| Language | `en-US (default, not explicitly set in request)` |
+| Speaker / Voice | `astra` (English) / `taru` (Hindi) |
+| Language | `en-US` (default) / `hi-IN` (when Hindi voice used) |
 | Endpoint | `https://users.rime.ai/v1/rime-tts` |
 | Audio Format | `mp3` |
 | Transport | Base64-encoded audio returned over HTTP from backend to extension, played via the browser's `Audio` object |
