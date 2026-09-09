@@ -470,8 +470,8 @@ function warmUpBackendConnection() {
   }
 }
 
-// Builds the overlay <div> and all of its child elements (mic visual,
-// transcript box, response box, close button), then returns it.
+// Builds the overlay <div> and all of its child elements (title, mic
+// visual, transcript box, response box, close button), then returns it.
 function buildOverlay() {
   // Make sure our CSS animations (mic gradients, glow, waves) are on the page.
   injectStyles();
@@ -542,6 +542,21 @@ function buildOverlay() {
     toggleHistoryPanel();
   });
 
+  // --- Title ("Vani") -----------------------------------------------------
+  // Small bold, centered title shown above the mic circle. Purely cosmetic
+  // — added alongside the close/history buttons and doesn't participate in
+  // any state logic.
+  const titleDiv = document.createElement("div");
+  titleDiv.id = "voicelayer-title";
+  titleDiv.innerText = "Vani";
+  titleDiv.style.textAlign = "center";
+  titleDiv.style.fontWeight = "bold";
+  titleDiv.style.fontSize = "15px";
+  titleDiv.style.letterSpacing = "0.5px";
+  titleDiv.style.color = "#c9a7ff"; // light purple/accent matching the theme
+  titleDiv.style.marginTop = "2px";
+  titleDiv.style.marginBottom = "4px";
+
   // --- History panel (slides open below the header, above the mic) -------
   // Collapsed by default via max-height/opacity, both transitioned so
   // opening/closing animates as a simple slide instead of an abrupt jump.
@@ -573,7 +588,7 @@ function buildOverlay() {
   // --- Transcript box (shows live speech-to-text as the user talks) ------
   const transcriptDiv = document.createElement("div");
   transcriptDiv.id = "voicelayer-transcript";
-  transcriptDiv.innerText = "Listening for speech...";
+  transcriptDiv.innerText = "Vani is listening...";
   transcriptDiv.style.background = "rgba(255, 255, 255, 0.08)";
   transcriptDiv.style.borderRadius = "8px";
   transcriptDiv.style.padding = "10px";
@@ -596,6 +611,7 @@ function buildOverlay() {
   // Put everything together inside the overlay.
   overlay.appendChild(closeButton);
   overlay.appendChild(historyButton);
+  overlay.appendChild(titleDiv);
   overlay.appendChild(historyPanel);
   overlay.appendChild(micVisual.wrapper);
   overlay.appendChild(transcriptDiv);
@@ -1247,7 +1263,7 @@ function updateTranscriptText(text) {
   // called on every onresult event.
   const transcriptDiv = transcriptDivEl;
   if (transcriptDiv) {
-    transcriptDiv.innerText = text || "Listening for speech...";
+    transcriptDiv.innerText = text || "Vani is listening...";
   }
 }
 
